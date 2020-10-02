@@ -11,8 +11,8 @@ The python script will need your username and password to login your binusmaya a
 ### Windows
 | - | Hash |
 | --- | ----|
-| sha1 | a1c972f02a56980d285dc59502b1e890bb8ce5ae |
-| md5 | 6c1b7c99fccdfbfe7437c14bb37e10ec |
+| sha1 | cdcf972eb8f23dd52f4d4023af1618d4d6d252e4 |
+| md5 | 2513f15402e5ec38d9f3ac6f34649b74 |
 
 ### Linux
 | - | Hash |
@@ -36,9 +36,11 @@ COMMAND:
 ASSIGNMENT:
  -a, --assignment : scraping on the assignment
  -w               : write into assignment.md
+ -o               : write into assignment_notion.md
 FORUM:
  -f, --forum      : scraping on the forum
- -w               : write into forum.md", end="\n\n
+ -w               : write into forum.md  with lecturer post and user post
+ -o               : write into forum_notion.md
 ```
 
 The tag -a and -f is running on specific information, where tag -a only listing assignment and -f listing on the forum. Tag -s is use for automatic choosing the semester on the list. For example if you want to choose your current semester you can use **-s 0**.
