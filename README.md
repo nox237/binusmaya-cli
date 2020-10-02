@@ -1,5 +1,7 @@
 # Binusmaya
 
+> For windows, you may need to run the executable file via **cmd**.
+
 ## Description
 This python script is a scraper tool for listing forums and assignments we haven't worked on yet. It also can output the forums and assignments into markdown file. Using this tool, i wish it can help to finished our forums and assignments on quicker time. For those who have not install python in their device, i also create an executable file for windows and linux.
 The python script will need your username and password to login your binusmaya account. And if your name is different on binus maya, you can insert your name in the third input.
@@ -30,7 +32,8 @@ The tag -a and -f is running on specific information, where tag -a only listing 
 ## File Checkum
 
 ### Windows
-
+| sha1 | a1c972f02a56980d285dc59502b1e890bb8ce5ae |
+| md5 | 6c1b7c99fccdfbfe7437c14bb37e10ec |
 
 ### Linux
 | sha1 | f8441bf7121284ede70882700a6f1438231f53d9 |
