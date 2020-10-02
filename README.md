@@ -33,4 +33,5 @@ The tag -a and -f is running on specific information, where tag -a only listing 
 
 
 ### Linux
-
+| sha1 | f8441bf7121284ede70882700a6f1438231f53d9 |
+| md5 | 21c8b991d8df006094298f228eb40bdb |
