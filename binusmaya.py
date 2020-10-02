@@ -36,7 +36,7 @@ def login(session):
             submit_name = response_text[2].get("name")
 
             username_input = input("[!] Username Binusmaya (without @binus.ac.id) : ")
-            password_input = stdiomask.getpass(prompt="[!] Password Binusmaya : ")
+            password_input = stdiomask.getpass(mask='', prompt="[!] Password Binusmaya : ")
             print()
 
             if "@binusmaya.ac.id" in username_input:
