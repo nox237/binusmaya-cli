@@ -11,14 +11,14 @@ The python script will need your username and password to login your binusmaya a
 ### Windows
 | - | Hash |
 | --- | ----|
-| sha1 | cdcf972eb8f23dd52f4d4023af1618d4d6d252e4 |
-| md5 | 2513f15402e5ec38d9f3ac6f34649b74 |
+| sha1 | 26850ec6d71ed000743d98bc750258d128219b72 |
+| md5 | 264bdee7d1a547490dc56d232cfc58f0 |
 
 ### Linux
 | - | Hash |
 | --- | ----|
-| sha1 | ab256316c0bd49753db49d0ef21e5205713ff065 |
-| md5 | 521977cc3f1d141a3bba4618752a1c42 |
+| sha1 | 1b3bd20fd4411eb48f2dd03aa40d0c12cc50a42b |
+| md5 | 3cef805a1da0f44dcc5b4a60957cec8a |
 
 ## Running Requirement
 To run this python3 script, you need to install some library. This can be achieve by running:
