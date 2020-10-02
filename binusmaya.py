@@ -10,30 +10,6 @@ import urllib.parse
 from termcolor import colored
 from bs4 import BeautifulSoup as bs
 
-URL = "https://binusmaya.binus.ac.id/"
-semester = -1
-semester_list = []
-username_input = ""
-real_username = ""
-
-check_list = []
-institution = []
-acadCareer = []
-period = []
-courses = []
-classes = []
-topics = []
-threads = []
-replies = []
-
-assignment_list = []
-assignment_subject = []
-assignment_complete = []
-
-status_refresh = False
-status_file_link = False
-status_write = False
-
 if sys.platform == "linux" or sys.platform == "linux2":
     # linux
     pass
@@ -59,7 +35,7 @@ def login(session):
             password_name = response_text[1].get("name")
             submit_name = response_text[2].get("name")
 
-            username_input = input("[!] Username Binusmaya : ")
+            username_input = input("[!] Username Binusmaya (without @binus.ac.id) : ")
             password_input = stdiomask.getpass(prompt="[!] Password Binusmaya : ")
             print()
 
@@ -209,6 +185,7 @@ def getForumList(session):
         class_list_temp = []
         thread_list_temp = []
         topic_list_temp = []
+        reply_list_temp = []
         status_thread = False
 
         for _class in classes_temp:
@@ -233,6 +210,7 @@ def getForumList(session):
                         class_list_temp.append(_class)
                         topic_list_temp.append(topic)
                         thread_list_temp.append(thread)
+                        reply_list_temp.append(replies_temp)
 
                         for index, reply in enumerate(replies_temp):
                             if index == 0:
@@ -257,6 +235,7 @@ def getForumList(session):
             classes.append(class_list_temp)
             topics.append(topic_list_temp)
             threads.append(thread_list_temp)
+            replies.append(reply_list_temp)
 
 
 def setSemester():
@@ -293,9 +272,11 @@ def help():
     print("ASSIGNMENT:")
     print(" -a, --assignment : scraping on the assignment")
     print(" -w               : write into assignment.md")
+    print(" -o               : write into assignment_notion.md")
     print("FORUM:")
     print(" -f, --forum      : scraping on the forum")
-    print(" -w               : write into forum.md", end="\n\n")
+    print(" -w               : write into forum.md  with lecturer post and user post")
+    print(" -o               : write into forum_notion.md", end="\n\n")
 
 
 def writeAssignmentToMarkdown():
@@ -321,24 +302,90 @@ def writeForumToMarkdown():
         f.write(f"# Forum\n\n")
         for index, course in enumerate(courses):
             f.write(f"## {course['Caption']}\n")
-            for topic, thread, _class, check in zip(topics[index], threads[index], classes[index], check_list[index]):
-                if check:
-                    f.write(f"[x] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n")
-                else:
-                    f.write(f"[ ] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n")
+            for topic, thread, _class, check, reply in zip(topics[index], threads[index], classes[index], check_list[index], replies[index]):
+                for index1, reply1 in enumerate(reply):
+                    if index1 == 0:
+                        if check:
+                            f.write(f"[x] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n")
+                        else:
+                            f.write(f"[ ] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n")
+                        f.write(f"    Lecturer Post: {urllib.parse.unquote(reply1['PostContent'])}\n")
+                    if check:
+                        if ' '.join(username_input.lower().split('.')) in reply1['Name'].lower():
+                            f.write(f"    You have answered the question at {reply1['PostDate']} : {reply1['PostContent']}\n")
+                            break
                 print(f"[+] Successfully writing {topic['Caption']} {urllib.parse.unquote(thread['ForumThreadTitle'])}")
             f.write("\n")
     print(colored("[+] Successfully writing all thread to forum.md", "green"))
     print()
 
 
+def writeAssignmentToMarkdownForNotion():
+    print("[!] Preparing writing assignment to a file")
+    with open("assignment_notion.md", "w") as f:
+        f.write(f"# Assignment\n\n")
+        for index, subject in enumerate(assignment_subject):
+            f.write(f"## {subject['COURSE_TITLE_LONG']} ({subject['SSR_COMPONENT']})\n")
+            for assignment in assignment_list[index]:
+                if assignment in assignment_complete:
+                    f.write(f"[x] {assignment['Title']}, deadline {assignment['deadlineTime']}, {assignment['deadlineDuration']}\n\n")
+                else:
+                    f.write(f"[ ] {assignment['Title']}, deadline {assignment['deadlineTime']}, {assignment['deadlineDuration']}\n\n")
+                print(f"[+] Successfully writing {assignment['Title']}")
+            f.write("\n")
+    print(colored("[+] Successfully writing all assignment to assignment_notion.md", "green"))
+    print()
+
+
+def writeForumToMarkdownForNotion():
+    print("[!] Preparing writing forum to a file")
+    with open("forum_notion.md", "w") as f:
+        f.write(f"# Forum\n\n")
+        for index, course in enumerate(courses):
+            f.write(f"## {course['Caption']}\n")
+            for topic, thread, _class, check in zip(topics[index], threads[index], classes[index], check_list[index]):
+                if check:
+                    f.write(f"[x] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n\n")
+                else:
+                    f.write(f"[ ] {topic['Caption']} ({_class['Caption']}), {urllib.parse.unquote(thread['ForumThreadTitle'])}\n\n")
+                print(f"[+] Successfully writing {topic['Caption']} {urllib.parse.unquote(thread['ForumThreadTitle'])}")
+            f.write("\n")
+    print(colored("[+] Successfully writing all thread to forum_notion.md", "green"))
+    print()
+
+
 if __name__ == "__main__":
     s = requests.Session()
-    opts, args = getopt.getopt(sys.argv[1:], "hfaws:", ["help", "forum", "assignment"])
+    opts, args = getopt.getopt(sys.argv[1:], "ohfaws:", ["help", "forum", "assignment"])
 
     banner()
     forum_listing = False
     assignment_listing = False
+
+    URL = "https://binusmaya.binus.ac.id/"
+    semester = -1
+    semester_list = []
+    username_input = ""
+    real_username = ""
+
+    check_list = []
+    institution = []
+    acadCareer = []
+    period = []
+    courses = []
+    classes = []
+    topics = []
+    threads = []
+    replies = []
+
+    assignment_list = []
+    assignment_subject = []
+    assignment_complete = []
+
+    status_refresh = False
+    status_file_link = False
+    status_write = False
+    status_write_notion = False
 
     for opt, val in opts:
         if opt in ("-h", "--help"):
@@ -352,6 +399,8 @@ if __name__ == "__main__":
             assignment_listing = True
         if opt in ("-s"):
             semester = int(val)
+        if opt in ("-o"):
+            status_write_notion = True
 
     login(s)
     getSemesterList(s)
@@ -363,15 +412,23 @@ if __name__ == "__main__":
     if forum_listing or assignment_listing:
         if assignment_listing:
             getAssignmentList(s)
-            writeAssignmentToMarkdown()
+            if status_write:
+                writeAssignmentToMarkdown()
+            if status_write_notion:
+                writeAssignmentToMarkdownForNotion()
         if forum_listing:
             getForumList(s)
-            writeForumToMarkdown()
+            if status_write:
+                writeForumToMarkdown()
+            if status_write_notion:
+                writeForumToMarkdownForNotion()
 
     if forum_listing == False and assignment_listing == False:
         getAssignmentList(s)
         getForumList(s)
         writeAssignmentToMarkdown()
         writeForumToMarkdown()
+        writeAssignmentToMarkdownForNotion()
+        writeForumToMarkdownForNotion()
 
     logout(s)

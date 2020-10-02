@@ -6,6 +6,20 @@
 This python script is a scraper tool for listing forums and assignments we haven't worked on yet. It also can output the forums and assignments into markdown file. Using this tool, i wish it can help to finished our forums and assignments on quicker time. For those who have not install python in their device, i also create an executable file for windows and linux.
 The python script will need your username and password to login your binusmaya account. And if your name is different on binus maya, you can insert your name in the third input.
 
+## File Checkum
+
+### Windows
+| - | Hash |
+| --- | ----|
+| sha1 | a1c972f02a56980d285dc59502b1e890bb8ce5ae |
+| md5 | 6c1b7c99fccdfbfe7437c14bb37e10ec |
+
+### Linux
+| - | Hash |
+| --- | ----|
+| sha1 | ab256316c0bd49753db49d0ef21e5205713ff065 |
+| md5 | 521977cc3f1d141a3bba4618752a1c42 |
+
 ## Running Requirement
 To run this python3 script, you need to install some library. This can be achieve by running:
 ```
@@ -29,12 +43,3 @@ FORUM:
 
 The tag -a and -f is running on specific information, where tag -a only listing assignment and -f listing on the forum. Tag -s is use for automatic choosing the semester on the list. For example if you want to choose your current semester you can use **-s 0**.
 
-## File Checkum
-
-### Windows
-| sha1 | a1c972f02a56980d285dc59502b1e890bb8ce5ae |
-| md5 | 6c1b7c99fccdfbfe7437c14bb37e10ec |
-
-### Linux
-| sha1 | f8441bf7121284ede70882700a6f1438231f53d9 |
-| md5 | 21c8b991d8df006094298f228eb40bdb |
