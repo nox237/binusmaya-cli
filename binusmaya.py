@@ -43,6 +43,7 @@ def login(session):
                 username_input = username_input.strip("@binusmaya.ac.id")
 
             real_username = input(f"[!] Enter your username (ENTER if your binusmaya mame is {' '.join(username_input.lower().split('.'))}): ")
+            full_name = input("[!] Enter your full name (as registered in binusmaya): ")
 
             response_text = bs(response.text, "html.parser").find_all("script")
             loader_php = ""
@@ -216,7 +217,7 @@ def getForumList(session):
                             if index == 0:
                                 print(colored(f"[+] Lecturer Post: {urllib.parse.unquote(reply['PostContent'])}", "yellow"))
 
-                            if ' '.join(username_input.lower().split('.')) in reply['Name'].lower() and status_answer == False:
+                            if full_name.lower() in reply['Name'].lower() and status_answer == False:
                                 print(colored(f"[+] You have answered the question: {reply['PostContent']}", 'green'))
                                 status_answer = True
                                 check_list_temp.append(True)
@@ -367,6 +368,7 @@ if __name__ == "__main__":
     semester_list = []
     username_input = ""
     real_username = ""
+    full_name = ""
 
     check_list = []
     institution = []
