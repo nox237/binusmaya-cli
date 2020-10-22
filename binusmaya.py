@@ -202,7 +202,7 @@ def getForumList(session):
 
                 for thread in threads_temp:
                     if thread['ID'] != -1:
-                        print(colored(f"[!] There is a thread on topic {topic['Caption']} : {urllib.parse.unquote(thread['ForumThreadTitle'])}, {thread['creator']}", "yellow"))
+                        print(colored(f"\n[!] There is a thread on topic {topic['Caption']} : {urllib.parse.unquote(thread['ForumThreadTitle'])}, {thread['creator']}", "yellow"))
                         data = {"threadid": f"{thread['ID']}?id=1"}
                         response = session.post(URL_getReply, headers=headers, json=data)
                         replies_temp = json.loads(json.loads(response.text)['rows'])
