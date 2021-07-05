@@ -7,7 +7,7 @@ from termcolor import colored
 from binusmaya import auth, assignment, enrichment, forum, todolist, utility
 
 
-STORAGE_LOCATION = os.path.dirname(__file__) + '/storage/'
+STORAGE_LOCATION = os.path.dirname(__file__) + "/storage/"
 if sys.platform == "linux" or sys.platform == "linux2":
     # linux
     pass
@@ -17,6 +17,7 @@ elif sys.platform == "darwin":
 elif sys.platform == "win32" or sys.platform == "win64":
     # Windows 32-bit or Windows 64-bit
     import colorama
+
     colorama.init()
 
 
@@ -32,7 +33,7 @@ def help():
     print("COMMAND:")
     print(" --all            : run all available command")
     print(" -h, --help       : help command")
-    print(' -s               : set semester to persistent index')
+    print(" -s               : set semester to persistent index")
     print("ASSIGNMENT:")
     print(" -a, --assignment : scraping on the assignment")
     print(" -w               : write into assignment.md")
@@ -54,7 +55,12 @@ def help():
 
 if __name__ == "__main__":
     s = requests.Session()
-    opts, args = getopt.getopt(sys.argv[1:], "ohfamwts:e:", ["help", "forum", "assignment", "todolist", "enrichment", "progressbar", "all"])
+    opts, args = getopt.getopt(
+        sys.argv[1:],
+        "ohfamwts:e:",
+        ["help", "forum", "assignment", "todolist",
+            "enrichment", "progressbar", "all"],
+    )
 
     banner()
     forum_listing = False
@@ -126,9 +132,9 @@ if __name__ == "__main__":
             scan_all = True
 
     if not os.path.exists(STORAGE_LOCATION):
-        print('[!] There is no storage directory')
+        print("[!] There is no storage directory")
         os.mkdir(STORAGE_LOCATION)
-        print(colored('[+] Create storage directory', 'green'), end="\n\n")
+        print(colored("[+] Create storage directory", "green"), end="\n\n")
 
     auth.login(s)
 
@@ -140,17 +146,69 @@ if __name__ == "__main__":
             print(f"[+] Set semester on {semester_list[semester][1]}")
 
         if assignment_listing:
-            assignment_list, assignment_subject, assignment_complete = assignment.getAssignmentList(s, semester_list, semester)
+            (
+                assignment_list,
+                assignment_subject,
+                assignment_complete,
+            ) = assignment.getAssignmentList(s, semester_list, semester)
             if status_write:
-                assignment.writeAssignmentToMarkdown(STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete)
+                assignment.writeAssignmentToMarkdown(
+                    STORAGE_LOCATION,
+                    assignment_list,
+                    assignment_subject,
+                    assignment_complete,
+                )
             if status_write_notion:
-                assignment.writeAssignmentToMarkdownForNotion(STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete)
+                assignment.writeAssignmentToMarkdownForNotion(
+                    STORAGE_LOCATION,
+                    assignment_list,
+                    assignment_subject,
+                    assignment_complete,
+                )
         if forum_listing:
-            institution, acadCareer, period, courses, classes, topics, threads, replies, check_list = forum.getForumList(s, institution, acadCareer, period, courses, classes, topics, threads, replies, check_list, semester)
+            (
+                institution,
+                acadCareer,
+                period,
+                courses,
+                classes,
+                topics,
+                threads,
+                replies,
+                check_list,
+            ) = forum.getForumList(
+                s,
+                institution,
+                acadCareer,
+                period,
+                courses,
+                classes,
+                topics,
+                threads,
+                replies,
+                check_list,
+                semester,
+            )
             if status_write:
-                forum.writeForumToMarkdown(STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies)
+                forum.writeForumToMarkdown(
+                    STORAGE_LOCATION,
+                    check_list,
+                    courses,
+                    classes,
+                    topics,
+                    threads,
+                    replies,
+                )
             if status_write_notion:
-                forum.writeForumToMarkdownForNotion(STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies)
+                forum.writeForumToMarkdownForNotion(
+                    STORAGE_LOCATION,
+                    check_list,
+                    courses,
+                    classes,
+                    topics,
+                    threads,
+                    replies,
+                )
         if todo_list_status:
             todo_list = todolist.getToDoList(s, todo_list)
             todolist.printToDoList(todo_list)
@@ -161,21 +219,58 @@ if __name__ == "__main__":
             semester = utility.setSemester(semester_list)
         else:
             print(f"[+] Set semester on {semester_list[semester][1]}")
-            
-        assignment_list, assignment_subject, assignment_complete = assignment.getAssignmentList(s, semester_list, semester)
-        institution, acadCareer, period, courses, classes, topics, threads, replies, check_list = forum.getForumList(s, institution, acadCareer, period, courses, classes, topics, threads, replies, check_list, semester)
+
+        (
+            assignment_list,
+            assignment_subject,
+            assignment_complete,
+        ) = assignment.getAssignmentList(s, semester_list, semester)
+        (
+            institution,
+            acadCareer,
+            period,
+            courses,
+            classes,
+            topics,
+            threads,
+            replies,
+            check_list,
+        ) = forum.getForumList(
+            s,
+            institution,
+            acadCareer,
+            period,
+            courses,
+            classes,
+            topics,
+            threads,
+            replies,
+            check_list,
+            semester,
+        )
         todo_list = todolist.getToDoList(s, todo_list)
 
-        assignment.writeAssignmentToMarkdown(STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete)
-        forum.writeForumToMarkdown(STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies)
-        assignment.writeAssignmentToMarkdownForNotion(STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete)
-        forum.writeForumToMarkdownForNotion(STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies)
+        assignment.writeAssignmentToMarkdown(
+            STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete
+        )
+        forum.writeForumToMarkdown(
+            STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies
+        )
+        assignment.writeAssignmentToMarkdownForNotion(
+            STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete
+        )
+        forum.writeForumToMarkdownForNotion(
+            STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies
+        )
         todolist.printToDoList(todo_list)
 
     if enrichment_status:
         temp_response = enrichment.login_to_enrichment(s)
-        strm = enrichment.get_semester_enrichment(s, enrichment_semester, temp_response)
-        enrichment.get_enrichment_information(s, enrichment_semester, strm, enrichment_mobile_view)
+        strm = enrichment.get_semester_enrichment(
+            s, enrichment_semester, temp_response)
+        enrichment.get_enrichment_information(
+            s, enrichment_semester, strm, enrichment_mobile_view
+        )
 
     auth.logout(s)
 

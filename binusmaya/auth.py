@@ -5,6 +5,7 @@ from binusmaya import URL
 from termcolor import colored
 from bs4 import BeautifulSoup as bs
 
+
 def login(session):
     global username_input
     try:
@@ -18,14 +19,19 @@ def login(session):
             password_name = response_text[1].get("name")
             submit_name = response_text[2].get("name")
 
-            username_input = input("[!] Username Binusmaya (without @binus.ac.id) : ")
-            password_input = stdiomask.getpass(mask='', prompt="[!] Password Binusmaya : ")
+            username_input = input(
+                "[!] Username Binusmaya (without @binus.ac.id) : ")
+            password_input = stdiomask.getpass(
+                mask="", prompt="[!] Password Binusmaya : "
+            )
             print()
 
             if "@binusmaya.ac.id" in username_input:
                 username_input = username_input.strip("@binusmaya.ac.id")
 
-            real_username = input(f"[!] Enter your username (ENTER if your binusmaya mame is {' '.join(username_input.lower().split('.'))}): ")
+            real_username = input(
+                f"[!] Enter your username (ENTER if your binusmaya mame is {' '.join(username_input.lower().split('.'))}): "
+            )
 
             response_text = bs(response.text, "html.parser").find_all("script")
             loader_php = ""
@@ -39,16 +45,28 @@ def login(session):
 
             print(f"[+] Getting CSRF token from {URL + loader_php[3:]}")
             response = session.get(URL + loader_php[3:])
-            temp = re.findall(r"\$\(this\)\.append\(\'<input type=\"hidden\" name=\"([\w\d%]+)\" value=\"([\w\d%]+)\" \/>'\)\;", response.text)
+            temp = re.findall(
+                r"\$\(this\)\.append\(\'<input type=\"hidden\" name=\"([\w\d%]+)\" value=\"([\w\d%]+)\" \/>'\)\;",
+                response.text,
+            )
             print(f"[+] Extracting CSRF token from {URL + loader_php[3:]}")
             csrf_one = temp[0]
             csrf_two = temp[1]
 
             print(f"[+] Sending POST request to {URL + 'login/'}")
-            data = {username_name: username_input, password_name: password_input, submit_name: "login", csrf_one[0]: csrf_one[1], csrf_two[0]: csrf_two[1]}
+            data = {
+                username_name: username_input,
+                password_name: password_input,
+                submit_name: "login",
+                csrf_one[0]: csrf_one[1],
+                csrf_two[0]: csrf_two[1],
+            }
             response = session.post(URL + "login/sys_login.php", data=data)
             if "error" not in response.url:
-                print(colored(f"[+] Successfully login to {response.url}", "green"), end="\n\n")
+                print(
+                    colored(f"[+] Successfully login to {response.url}", "green"),
+                    end="\n\n",
+                )
             else:
                 print(colored(f"[-] Failed login to {response.url}", "red"), end="\n\n")
                 exit(1)
@@ -67,6 +85,9 @@ def logout(session):
     temp_URL = URL + "services/ci/index.php/login/logout"
     session.get(temp_URL)
 
-    temp_URL = URL + "simplesaml/module.php/core/as_logout.php?AuthId=default-sp&ReturnTo=https%3A%2F%2Fbinusmaya.binus.ac.id%2Flogin"
+    temp_URL = (
+        URL
+        + "simplesaml/module.php/core/as_logout.php?AuthId=default-sp&ReturnTo=https%3A%2F%2Fbinusmaya.binus.ac.id%2Flogin"
+    )
     session.get(temp_URL)
     print(f"[+] Successfully logging out from {URL}")

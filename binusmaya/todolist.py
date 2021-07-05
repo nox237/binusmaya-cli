@@ -3,6 +3,7 @@ import requests
 from termcolor import colored
 from binusmaya import URL
 
+
 def printToDoList(todo_list):
     if len(todo_list) > 0:
         print(colored(f"[!] There is {len(todo_list)} todo list", "yellow"))
@@ -23,7 +24,9 @@ def getToDoList(session, todo_list):
     # Getting the todo list
     print(f"[+] Getting todo list in {URL}")
     headers = {"referer": "https://binusmaya.binus.ac.id/newStudent/"}
-    response = session.post(URL + "services/ci/index.php/student/general/todo/list", headers=headers)
+    response = session.post(
+        URL + "services/ci/index.php/student/general/todo/list", headers=headers
+    )
     todo_list = json.loads(response.text)
     print(colored(f"[+] Succesfully get todo list on {URL}", "green"))
     return todo_list

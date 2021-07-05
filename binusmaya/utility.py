@@ -3,15 +3,20 @@ import requests
 from binusmaya import URL
 from termcolor import colored
 
+
 def getSemesterList(session):
     # Getting the semester list
     print(f"[+] Getting semester in {URL}")
     headers = {"referer": "https://binusmaya.binus.ac.id/newStudent/"}
-    response = session.post(URL + "services/ci/index.php/student/init/getStudentCourseMenuCourses", headers=headers)
+    response = session.post(
+        URL + "services/ci/index.php/student/init/getStudentCourseMenuCourses",
+        headers=headers,
+    )
     semester_list = json.loads(response.text)[0][3]
     print(colored(f"[+] Succesfully get semester list on {URL}", "green"))
 
     return semester_list
+
 
 def setSemester(semester_list):
     temp = []
