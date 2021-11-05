@@ -34,6 +34,7 @@ def help():
     print(" --all            : run all available command")
     print(" -h, --help       : help command")
     print(" -s               : set semester to persistent index")
+    print(" --without-banner : print without banner")
     print("ASSIGNMENT:")
     print(" -a, --assignment : scraping on the assignment")
     print(" -w               : write into assignment.md")
@@ -59,10 +60,11 @@ if __name__ == "__main__":
         sys.argv[1:],
         "ohfamwts:e:",
         ["help", "forum", "assignment", "todolist",
-            "enrichment", "progressbar", "all"],
+            "enrichment", "progressbar", "all", "without-banner"],
     )
 
-    banner()
+    help_status = False
+    without_banner = False
     forum_listing = False
     assignment_listing = False
 
@@ -103,8 +105,7 @@ if __name__ == "__main__":
 
     for opt, val in opts:
         if opt in ("-h", "--help"):
-            help()
-            exit(0)
+            help_status = True
         if opt in ("-m"):
             enrichment_mobile_view = True
         if opt in ("-w"):
@@ -130,6 +131,15 @@ if __name__ == "__main__":
             status_detail_write = True
         if opt in ("--all"):
             scan_all = True
+        if opt in ("--without-banner"):
+            without_banner = True
+
+    if not without_banner:
+        banner()
+
+    if help_status:
+        help()
+        exit(0)
 
     if not os.path.exists(STORAGE_LOCATION):
         print("[!] There is no storage directory")
@@ -188,6 +198,8 @@ if __name__ == "__main__":
                 replies,
                 check_list,
                 semester,
+                status_progressbar,
+                username_input,
             )
             if status_write:
                 forum.writeForumToMarkdown(
@@ -198,6 +210,7 @@ if __name__ == "__main__":
                     topics,
                     threads,
                     replies,
+                    status_detail_write,
                 )
             if status_write_notion:
                 forum.writeForumToMarkdownForNotion(
@@ -247,6 +260,8 @@ if __name__ == "__main__":
             replies,
             check_list,
             semester,
+            status_progressbar,
+            username_input,
         )
         todo_list = todolist.getToDoList(s, todo_list)
 
@@ -254,7 +269,7 @@ if __name__ == "__main__":
             STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete
         )
         forum.writeForumToMarkdown(
-            STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies
+            STORAGE_LOCATION, check_list, courses, classes, topics, threads, replies, status_detail_write
         )
         assignment.writeAssignmentToMarkdownForNotion(
             STORAGE_LOCATION, assignment_list, assignment_subject, assignment_complete

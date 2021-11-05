@@ -104,29 +104,33 @@ def login_to_enrichment(session):
     token = session.get(
         URL + "services/ci/index.php/student/enrichmentApps/GetToken/", headers=headers
     )
-    print(
-        f'[+] Getting the SSO token from {URL + "services/ci/index.php/student/enrichmentApps/GenerateSSOTokenEnrichment/"} for Enrichment Apps'
-    )
-    data = {"Token": token.text[1:-1]}
-    sso_token = session.post(
-        URL
-        + "services/ci/index.php/student/enrichmentApps/GenerateSSOTokenEnrichment/",
-        json=data,
-        headers=headers,
-    )
-    response = session.get(
-        BASE_URL_ENRICHMENT +
-        "Login/Student/SSO?t={}".format(sso_token.text[1:-1])
-    )
-    print(colored("[!] Successfully login to Enrichment Apps",
-                  "green"), end="\n\n")
-    return response
+    if token.text != "NOTFOUND":
+        print(
+            f'[+] Getting the SSO token from {URL + "services/ci/index.php/student/enrichmentApps/GenerateSSOTokenEnrichment/"} for Enrichment Apps'
+        )
+        data = {"Token": token.text[1:-1]}
+        sso_token = session.post(
+            URL
+            + "services/ci/index.php/student/enrichmentApps/GenerateSSOTokenEnrichment/",
+            json=data,
+            headers=headers,
+        )
+        if sso_token.text == "NOTFOUND":
+            print(colored("[!] Unable to get SSO Token via binusmaya.ac.id", "red"))
+            exit(1)
+        response = session.get(
+            BASE_URL_ENRICHMENT + "Login/Student/SSO?t={}".format(sso_token.text[1:-1])
+        )
+        print(colored("[!] Successfully login to Enrichment Apps", "green"), end="\n\n")
+        return response
+    else:
+        print(colored("[!] Unable to login via binusmaya.ac.id", "red"))
+        exit(1)
 
 
 def get_semester_enrichment(session, semester, response):
     print("[+] Getting all the semester from Enrichment Apps")
-    options = bs(response.text, "html.parser").find(
-        "select").find_all("option")
+    options = bs(response.text, "html.parser").find("select").find_all("option")
 
     if semester == -1:
         print("[!] Choose semester:")
@@ -185,16 +189,14 @@ def get_internship_information(s, semester, strm, mobile_view, response):
     )
     internship_offering = json.loads(response_3.text)
 
-    response = s.get(BASE_URL_INTERNSHIP +
-                     "Dashboard/Student", headers=headers)
+    response = s.get(BASE_URL_INTERNSHIP + "Dashboard/Student", headers=headers)
     table = bs(response.text, "html.parser").find("table").find_all("tr")
     intern_status = []
     x = PrettyTable()
     print(colored("[!] Getting all applied internship", "yellow"))
     if mobile_view:
         print("[!] Setting up on the mobile view")
-        x.field_names = ["Company", "Position",
-                         "Start Date", "End Date", "Status"]
+        x.field_names = ["Company", "Position", "Start Date", "End Date", "Status"]
         x._max_width = {"Company": 30, "Position": 45, "Status": 15}
     else:
         print("[!] Setting up on the desktop view")
@@ -337,5 +339,4 @@ def get_enrichment_information(s, semester, strm, mobile_view):
     print()
 
     if "Go to Internship Apps" in response.text:
-        get_internship_information(
-            s, semester, strm, mobile_view, response.text)
+        get_internship_information(s, semester, strm, mobile_view, response.text)

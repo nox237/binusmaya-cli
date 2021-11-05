@@ -136,8 +136,7 @@ def writeAssignmentToMarkdown(
                     )
                 print(f"[+] Successfully writing {assignment['Title']}")
             f.write("\n")
-    print(
-        colored("[+] Successfully writing all assignment to assignment.md", "green"))
+    print(colored("[+] Successfully writing all assignment to assignment.md", "green"))
     print()
 
 

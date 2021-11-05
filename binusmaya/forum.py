@@ -1,5 +1,6 @@
 import json
 import requests
+import urllib
 from binusmaya import URL
 from termcolor import colored
 
@@ -16,6 +17,8 @@ def getForumList(
     replies,
     check_list,
     semester,
+    status_progressbar,
+    username_input,
 ):
     print("[!] Starting scraping on forum")
     headers = {"referer": "https://binusmaya.binus.ac.id/newStudent/"}
@@ -104,7 +107,8 @@ def getForumList(
                     "forumtypeid": 1,
                     "topic": topic["ID"],
                 }
-                response = session.post(URL_getThread, headers=headers, json=data)
+                response = session.post(
+                    URL_getThread, headers=headers, json=data)
                 threads_temp = json.loads(json.loads(response.text)["rows"])
 
                 for thread in threads_temp:
@@ -122,20 +126,24 @@ def getForumList(
                                 URL_getReply, headers=headers, json=data, stream=True
                             )
                             json_data = ""
-                            total_size = int(response.headers["Content-Length"])
+                            total_size = int(
+                                response.headers["Content-Length"])
                             for response_data in tqdm(
-                                iterable=response.iter_content(chunk_size=1024),
+                                iterable=response.iter_content(
+                                    chunk_size=1024),
                                 total=int(total_size / 1024),
                                 unit="KB",
                                 leave=False,
                             ):
                                 json_data += response_data.decode()
-                            replies_temp = json.loads(json.loads(json_data)["rows"])
+                            replies_temp = json.loads(
+                                json.loads(json_data)["rows"])
                         else:
                             response = session.post(
                                 URL_getReply, headers=headers, json=data
                             )
-                            replies_temp = json.loads(json.loads(response.text)["rows"])
+                            replies_temp = json.loads(
+                                json.loads(response.text)["rows"])
 
                         status_answer = False
                         status_thread = True
@@ -213,15 +221,18 @@ def getForumList(
                                     stream=True,
                                 )
                                 json_data = ""
-                                total_size = int(response.headers["Content-Length"])
+                                total_size = int(
+                                    response.headers["Content-Length"])
                                 for response_data in tqdm(
-                                    iterable=response.iter_content(chunk_size=1024),
+                                    iterable=response.iter_content(
+                                        chunk_size=1024),
                                     total=int(total_size / 1024),
                                     unit="KB",
                                     leave=False,
                                 ):
                                     json_data += response_data.decode()
-                                replies_temp = json.loads(json.loads(json_data)["rows"])
+                                replies_temp = json.loads(
+                                    json.loads(json_data)["rows"])
                             else:
                                 response = session.post(
                                     URL_getReply, headers=headers, json=data
@@ -299,7 +310,7 @@ def getForumList(
 
 
 def writeForumToMarkdown(
-    storage_path, check_list, courses, classes, topics, threads, replies
+    storage_path, check_list, courses, classes, topics, threads, replies, status_detail_write
 ):
     print("[!] Preparing writing forum to a file")
     with open(storage_path + "forum.md", "w") as f:
@@ -367,5 +378,6 @@ def writeForumToMarkdownForNotion(
                     f"[+] Successfully writing {topic['Caption']} {urllib.parse.unquote(thread['ForumThreadTitle'])}"
                 )
             f.write("\n")
-    print(colored("[+] Successfully writing all thread to forum_notion.md", "green"))
+    print(
+        colored("[+] Successfully writing all thread to forum_notion.md", "green"))
     print()
